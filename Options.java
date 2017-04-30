@@ -42,7 +42,7 @@ public class Options extends JPanel{
 	String binPath;
 	JLabel tree, compressed;
 	int heightI=0,widthI=0, wd=0;
-	
+	String pth;
 	public ArrayList<String> pathL = new ArrayList();
 	public ArrayList<Integer> valueL = new ArrayList();
 	
@@ -56,7 +56,7 @@ public class Options extends JPanel{
 		img.setBounds(10,100,400,400);
 		
 		loadImage(path);
-		
+		pth = path;
 		//This creates a nice frame.
 		Border compound;
 		Border redline = BorderFactory.createLineBorder(Color.red);
@@ -130,6 +130,35 @@ public class Options extends JPanel{
 	           		save();
 	           		initialize();
 	           	}
+	           	
+	           	else if(choice.equals("b")){
+	           		//getPixels(path);
+	           		//save();
+	           		//initialize();
+	           		
+	           		getPixelsNoCount(path);
+	           		
+	           		try {
+						addFileToList();
+					} catch (NumberFormatException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	           		
+	           		countColors();
+	           		
+	           		try {
+						saveToHuff();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	           
+	           	}
+	           	
 	           }
 	       });
 		
@@ -174,6 +203,10 @@ public class Options extends JPanel{
 	        	   valueL = new ArrayList();
 	        		
 
+	        	   heightI=0;
+	        	   widthI=0;
+	        	   wd=0;
+	        	   
 	        	   root = new Node();
 	        	   
 	        	   BufferedReader rd = null;
@@ -375,6 +408,106 @@ public class Options extends JPanel{
 		
 	}
 	
+	public void getPixelsNoCount(String path){
+		BufferedImage i = null;
+		 
+        try {
+				i = ImageIO.read(new File(path));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        int width = i.getWidth();
+		    int height = i.getHeight();
+		    int size = (width * height) * 3;
+		    pixels = new ArrayList<Integer>(size);
+		    System.out.println("PIXELS SIZE IS set null " +pixels.size());
+        WritableRaster inraster = i.getRaster();
+        for (int a = 0; a < width; a++){
+            for (int j = 0; j < height; j++) {
+                pixels.add(inraster.getSample(a, j, 0));
+                pixels.add(inraster.getSample(a, j, 1));
+                pixels.add(inraster.getSample(a, j, 2));
+            }
+        }
+        System.out.println("PIXELS SIZE IS han first " +pixels.size());
+	}
+	
+	
+	public void addFileToList() throws NumberFormatException, IOException{
+		JFileChooser c=new JFileChooser();
+		int rVal =c.showOpenDialog(null);
+        if(rVal == JFileChooser.APPROVE_OPTION) {
+            pth=c.getSelectedFile().getAbsolutePath();
+           addFile(pth);
+        }	       
+	}
+	
+	
+	public void addFile(String path) throws NumberFormatException, IOException{
+		FileReader fr  = new FileReader(path);
+        BufferedReader rd = new BufferedReader(fr);
+        String str;
+        int loop;
+        
+        while(true){
+        	str = rd.readLine();
+        	
+        	if(str == null)
+        		break;
+        
+        	int p = Integer.parseInt(str);
+        	
+        	//System.out.println("INT IS " +p);
+        	
+        	loop = Integer.parseInt(rd.readLine());
+        	
+        	for (int i=0; i <loop; i++){
+        		pixels.add(p);
+        	}
+        }
+         rd.close();
+         fr.close();
+         System.out.println("PIXELS SIZE IS again " +pixels.size());
+	}
+	
+	public void saveToHuff() throws IOException{
+		BufferedWriter bw = null;
+		FileWriter fw = null;
+    	
+    	
+       
+       
+        
+        
+        JFileChooser chooser=new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int retrieval = chooser.showSaveDialog(null);
+
+		String pathA=chooser.getSelectedFile().getAbsolutePath();
+		System.out.println("PATH IS " +pathA);
+		String filename=chooser.getSelectedFile().getName();
+		//System.out.println("NAME IS " +filename);
+		
+		if (retrieval == JFileChooser.APPROVE_OPTION) {
+	        	 fw = new FileWriter(pathA +".huff");
+	             bw = new BufferedWriter(fw);
+        
+        
+        
+	             for (int i = 0; i < pixelArr.length; i++) {
+        	
+	        	bw.write(Integer.toString(pixelArr[i]));
+	        	bw.newLine();
+	        	bw.write(Integer.toString(pixelFreq[i]));
+	        	bw.newLine();
+	       
+	    	}
+		}
+        bw.close();
+        fw.close();
+	}
+	
 	public int decode(String bits) {
     // create empty string to hold decoded message
 		int decoded =0;
@@ -447,9 +580,7 @@ public class Options extends JPanel{
              }
          }
          
-         for(int k =0 ; k<pixels.size(); k++){
-        	 System.out.println(pixels.get(k));
-         }
+         System.out.println("PIXELS SIZE IS " +pixels.size());
          
          countColors();
 	}
