@@ -128,14 +128,11 @@ public class Options extends JPanel{
 	           	if(choice.equals("a")){
 	           		getPixels(path);
 	           		save();
-	           		initialize();
+	           		
 	           	}
 	           	
 	           	else if(choice.equals("b")){
-	           		//getPixels(path);
-	           		//save();
-	           		//initialize();
-	           		
+
 	           		getPixelsNoCount(path);
 	           		
 	           		try {
@@ -225,11 +222,9 @@ public class Options extends JPanel{
 							 break;
 						 
 						 int v = Integer.parseInt(s);
-						 //System.out.println(s);
 						 
 						 s=rd.readLine();
 						 int w = Integer.parseInt(s);
-			            //System.out.println(s);
 						 huffQueue.offer(new Node(v, w, null, null, null));
 						 
 						 
@@ -317,16 +312,9 @@ public class Options extends JPanel{
 					e2.printStackTrace();
 				}
 				
-				 
-				 
-				 
-				 
-				 System.out.println(widthI);
-				 System.out.println(heightI);
+
 				 BufferedImage img = new BufferedImage(heightI, widthI, BufferedImage.TYPE_INT_RGB);
-				
-				 
-				 
+
 				 try {
 						fr = new FileReader(compF.getText());
 						rd = new BufferedReader(fr);
@@ -393,7 +381,7 @@ public class Options extends JPanel{
 		
 		compress.addActionListener(new ActionListener() {
 	           public void actionPerformed(ActionEvent e) {
-	           
+	        	   initialize();
 	        	   genCode(root, "");
 	        	   try {
 					storeBin(path);
@@ -421,7 +409,7 @@ public class Options extends JPanel{
 		    int height = i.getHeight();
 		    int size = (width * height) * 3;
 		    pixels = new ArrayList<Integer>(size);
-		    System.out.println("PIXELS SIZE IS set null " +pixels.size());
+		    
         WritableRaster inraster = i.getRaster();
         for (int a = 0; a < width; a++){
             for (int j = 0; j < height; j++) {
@@ -430,7 +418,7 @@ public class Options extends JPanel{
                 pixels.add(inraster.getSample(a, j, 2));
             }
         }
-        System.out.println("PIXELS SIZE IS han first " +pixels.size());
+
 	}
 	
 	
@@ -458,7 +446,6 @@ public class Options extends JPanel{
         
         	int p = Integer.parseInt(str);
         	
-        	//System.out.println("INT IS " +p);
         	
         	loop = Integer.parseInt(rd.readLine());
         	
@@ -468,7 +455,7 @@ public class Options extends JPanel{
         }
          rd.close();
          fr.close();
-         System.out.println("PIXELS SIZE IS again " +pixels.size());
+
 	}
 	
 	public void saveToHuff() throws IOException{
@@ -485,9 +472,8 @@ public class Options extends JPanel{
 		int retrieval = chooser.showSaveDialog(null);
 
 		String pathA=chooser.getSelectedFile().getAbsolutePath();
-		System.out.println("PATH IS " +pathA);
+
 		String filename=chooser.getSelectedFile().getName();
-		//System.out.println("NAME IS " +filename);
 		
 		if (retrieval == JFileChooser.APPROVE_OPTION) {
 	        	 fw = new FileWriter(pathA +".huff");
@@ -514,12 +500,8 @@ public class Options extends JPanel{
 
     // iterate through bits
     	for (int i = 0; i < bits.length(); i++) {
-    		//if (!getVal(bits.substring(0, i+1)).equals("")) {
-    		
             	decoded = getVal(bits);
-            	//bits = bits.substring(i+1);
-            	//i = 0;
-        	//}
+
     	}
     	return decoded;
 	}
@@ -580,8 +562,6 @@ public class Options extends JPanel{
              }
          }
          
-         System.out.println("PIXELS SIZE IS " +pixels.size());
-         
          countColors();
 	}
 	
@@ -604,9 +584,7 @@ public class Options extends JPanel{
 	        int p = duplicateRemoved.get(i);
 	        int count = Collections.frequency(pixels, p);
 	        pixelArr[i] = p;
-	        //System.out.println("Pixel " +p);
 	        pixelFreq[i] = count;
-	        //System.out.println("freq " +count);
 	    }
 	    
 	}
@@ -641,12 +619,9 @@ public class Options extends JPanel{
  			FileWriter fw = null;
  	    	
  	    	
- 	        fw = new FileWriter(p +".jay");
+ 	        fw = new FileWriter(p +".chorba");
  	        bw = new BufferedWriter(fw);
- 	       // fw.write(sb.toString());
- 	       // for (int s = 0; s < pixelArr.length; s++) {
- 	        	
- 	        	
+
  	        	 WritableRaster inraster = i.getRaster();
  	            for (int a = 0; a < width; a++){
  	                for (int j = 0; j < height; j++) {
@@ -685,8 +660,6 @@ public class Options extends JPanel{
  	                bw.newLine();
  	            }    
  	        	
-
- 		   // }
  	        bw.write("end");
  	        bw.close();
  	        fw.close();
@@ -700,21 +673,11 @@ public class Options extends JPanel{
 		int retrieval = chooser.showSaveDialog(null);
 
 		String path=chooser.getSelectedFile().getAbsolutePath();
-		System.out.println("PATH IS " +path);
 		String filename=chooser.getSelectedFile().getName();
-		System.out.println("NAME IS " +filename);
 		
 		if (retrieval == JFileChooser.APPROVE_OPTION) {
 	        try {
 	        	writeToHuff(path);
-	            
-	            
-	           //readFromHuff(path);
-	            
-	            
-	            
-	           
-	            
 	            
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
@@ -731,14 +694,11 @@ public class Options extends JPanel{
     	
         fw = new FileWriter(path +".huff");
         bw = new BufferedWriter(fw);
-       // fw.write(sb.toString());
         for (int i = 0; i < pixelArr.length; i++) {
-        	System.out.println("JSGHDJGSH " +pixelArr[i]);
 	        bw.write(Integer.toString(pixelArr[i]));
 	        bw.newLine();
 	        bw.write(Integer.toString(pixelFreq[i]));
 	        bw.newLine();
-	        //System.out.println("freq " +count);
 	    }
         bw.close();
         fw.close();
@@ -750,7 +710,6 @@ public class Options extends JPanel{
          BufferedReader rd = new BufferedReader(fr);
          
          int p = Integer.parseInt(rd.readLine());
-         System.out.println("INT IS " +p);
          
          rd.close();
          fr.close();
